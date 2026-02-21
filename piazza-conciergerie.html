@@ -1,11 +1,626 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Piazza Conciergerie</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piazza Conciergerie – Tours</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --blanc:      #f8f5f0;
+    --blanc-pur:  #ffffff;
+    --or:         #c9a84c;
+    --or-light:   #dfc06a;
+    --anthracite: #242424;
+    --anthracite2:#2e2e2e;
+    --gris:       #888;
+    --bordure:    #e6e0d8;
+    --texte:      #333;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--blanc);
+    color: var(--texte);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.75s ease, transform 0.75s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .d1 { transition-delay: 0.1s; }
+  .d2 { transition-delay: 0.2s; }
+  .d3 { transition-delay: 0.3s; }
+  .d4 { transition-delay: 0.4s; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(36,36,36,0.97);
+    backdrop-filter: blur(10px);
+    height: 68px;
+    padding: 0 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    transition: box-shadow 0.3s;
+  }
+
+  nav.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px; font-weight: 400;
+    color: var(--or); letter-spacing: 2px; text-decoration: none;
+  }
+
+  .logo small {
+    display: block; font-family: 'DM Sans', sans-serif;
+    font-size: 8px; letter-spacing: 4px;
+    color: rgba(248,245,240,0.45);
+    text-transform: uppercase; margin-top: 2px; font-weight: 300;
+  }
+
+  .nav-links { list-style: none; display: flex; gap: 36px; align-items: center; }
+
+  .nav-links a {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(248,245,240,0.6); text-decoration: none; font-weight: 400;
+    font-family: 'DM Sans', sans-serif;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--or); }
+
+  .nav-links .cta {
+    padding: 9px 22px;
+    border: 1px solid var(--or);
+    color: var(--or) !important;
+    transition: background 0.3s, color 0.3s !important;
+  }
+
+  .nav-links .cta:hover { background: var(--or); color: var(--anthracite) !important; }
+
+  /* ─────────────────────────────
+     HERO — fond anthracite centré
+     ───────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    background: var(--anthracite);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 140px 60px 100px;
+    position: relative; overflow: hidden;
+  }
+
+  /* lignes verticales décoratives */
+  .hero::before, .hero::after {
+    content: '';
+    position: absolute; top: 0; bottom: 0; width: 1px;
+    background: linear-gradient(to bottom, transparent 5%, var(--or) 35%, var(--or) 65%, transparent 95%);
+    opacity: 0.18;
+  }
+  .hero::before { left: 72px; }
+  .hero::after  { right: 72px; }
+
+  /* halo doré subtil */
+  .hero-glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 60% 50% at 50% 45%, rgba(201,168,76,0.07) 0%, transparent 70%);
+  }
+
+  .hero-inner { position: relative; max-width: 780px; }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+    color: var(--or); margin-bottom: 40px; font-weight: 400;
+  }
+
+  .hero-tag::before, .hero-tag::after {
+    content: ''; display: inline-block;
+    width: 30px; height: 1px; background: var(--or); opacity: 0.6;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 8vw, 88px);
+    font-weight: 300; line-height: 1.08;
+    color: var(--blanc); margin-bottom: 28px; letter-spacing: -0.5px;
+  }
+
+  .hero h1 em { font-style: italic; color: var(--or-light); }
+
+  .hero-sub {
+    font-size: 15px; line-height: 1.9;
+    color: rgba(248,245,240,0.75);
+    max-width: 520px; margin: 0 auto 52px; font-weight: 300;
+  }
+
+  .hero-btns { display: flex; align-items: center; justify-content: center; gap: 28px; }
+
+  .btn-hero {
+    display: inline-block;
+    padding: 15px 42px;
+    background: var(--or);
+    color: var(--anthracite);
+    font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+    text-decoration: none; font-weight: 500;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .btn-hero:hover { background: var(--or-light); transform: translateY(-1px); }
+
+  .btn-ghost {
+    display: inline-block;
+    padding: 15px 42px;
+    border: 1px solid rgba(248,245,240,0.55);
+    color: rgba(248,245,240,0.9);
+    font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+    text-decoration: none; font-weight: 400;
+    transition: border-color 0.3s, color 0.3s;
+  }
+
+  .btn-ghost:hover { border-color: var(--or); color: var(--or); }
+
+  /* indicateur scroll */
+  @keyframes bobble {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(7px); }
+  }
+
+  /* ─────────────
+     SECTIONS
+  ───────────── */
+  section.light { background: var(--blanc); }
+  section.dark  { background: var(--anthracite); }
+
+  section { padding: 100px 72px; }
+
+  .s-label {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--or); font-weight: 400; margin-bottom: 18px;
+  }
+
+  .s-label::before {
+    content: ''; display: inline-block;
+    width: 22px; height: 1px; background: var(--or);
+  }
+
+  .s-label.center { justify-content: center; }
+  .s-label.center::before { display: none; }
+
+  h2.s-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 52px);
+    font-weight: 300; line-height: 1.15;
+    color: var(--texte); margin-bottom: 16px;
+  }
+
+  h2.s-title.light-text { color: var(--blanc); }
+
+  /* ── MISSION (fond clair) ── */
+  .mission-grid {
+    max-width: 1100px; margin: 60px auto 0;
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: start;
+  }
+
+  .mission-text p {
+    font-size: 15px; line-height: 1.95; color: #555; margin-top: 8px;
+  }
+
+  .mission-cards {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 0;
+  }
+
+  .m-card {
+    background: var(--blanc-pur); border: 1px solid var(--bordure);
+    padding: 28px 22px; position: relative; overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .m-card::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; height: 2px; width: 0;
+    background: var(--or); transition: width 0.4s;
+  }
+
+  .m-card:hover { border-color: var(--or); }
+  .m-card:hover::after { width: 100%; }
+
+  .m-card strong {
+    display: block; font-family: 'Cormorant Garamond', serif;
+    font-size: 21px; font-weight: 400; color: var(--texte); margin-bottom: 4px;
+  }
+
+  .m-card span { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gris); }
+
+  /* ── SERVICES (fond sombre) ── */
+  .services-intro {
+    font-size: 15px; color: rgba(248,245,240,0.5); line-height: 1.9; margin-top: 10px;
+    max-width: 420px;
+  }
+
+  .services-header {
+    max-width: 1100px; margin: 0 auto 52px;
+  }
+
+  .services-grid {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+    background: #3a3a3a;
+  }
+
+  .srv {
+    background: var(--anthracite2); padding: 52px 44px;
+    border-bottom: 2px solid transparent; transition: border-color 0.3s, background 0.3s;
+  }
+
+  .srv:hover { border-color: var(--or); background: #2a2a2a; }
+
+  .srv-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px; font-weight: 300; color: var(--or);
+    opacity: 0.18; line-height: 1; margin-bottom: 20px;
+  }
+
+  .srv h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 300; color: var(--blanc); margin-bottom: 24px;
+  }
+
+  .srv ul { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+
+  .srv ul li {
+    font-size: 13.5px; line-height: 1.75;
+    color: rgba(248,245,240,0.5);
+    padding-left: 20px; position: relative;
+  }
+
+  .srv ul li::before {
+    content: ''; position: absolute; left: 0; top: 11px;
+    width: 8px; height: 1px; background: var(--or); opacity: 0.7;
+  }
+
+  /* ── POURQUOI (fond clair) ── */
+  .pourquoi-head { text-align: center; margin-bottom: 60px; }
+
+  .p-row1 {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; background: var(--bordure);
+    max-width: 1100px; margin: 0 auto;
+  }
+
+  .p-row2 {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 2px; background: var(--bordure);
+    max-width: calc(1100px * 2/3 + 1px);
+    margin: 2px auto 0;
+  }
+
+  .p-card {
+    background: var(--blanc-pur); padding: 44px 32px; text-align: center;
+    position: relative; overflow: hidden; transition: background 0.3s;
+  }
+
+  .p-card::before {
+    content: ''; position: absolute; top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 2px; background: var(--or); transition: width 0.4s;
+  }
+
+  .p-card:hover { background: var(--blanc); }
+  .p-card:hover::before { width: 56px; }
+
+  .p-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px; font-weight: 400; color: var(--texte);
+    margin-bottom: 12px; line-height: 1.35;
+  }
+
+  .p-card p { font-size: 13.5px; line-height: 1.85; color: #777; }
+
+  /* ── TARIFS (fond sombre) ── */
+  .tarifs-top {
+    max-width: 1100px; margin: 0 auto 60px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end;
+  }
+
+  .tarifs-note-top {
+    font-size: 15px; color: rgba(248,245,240,0.8); line-height: 1.9;
+  }
+
+  .tarifs-grid {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+
+  .t-card {
+    border: 1px solid #3a3a3a; padding: 44px 36px; background: var(--anthracite2);
+    position: relative; transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .t-card:hover { border-color: var(--or); transform: translateY(-3px); }
+  .t-card.star  { border-color: rgba(201,168,76,0.5); background: #2a2a24; }
+
+  .t-badge {
+    position: absolute; top: -1px; right: 28px;
+    background: var(--or); color: var(--anthracite);
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 14px; font-weight: 500;
+  }
+
+  .t-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--or); margin-bottom: 20px; }
+
+  .t-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 62px; font-weight: 300; color: var(--blanc);
+    line-height: 1; margin-bottom: 6px;
+  }
+
+  .t-price sup { font-size: 24px; color: var(--or); vertical-align: super; }
+
+  .t-sub {
+    font-size: 12px; color: rgba(248,245,240,0.65); letter-spacing: 0.5px;
+    margin-bottom: 22px; padding-bottom: 22px;
+    border-bottom: 1px solid #3a3a3a;
+  }
+
+  .t-desc { font-size: 13.5px; line-height: 1.85; color: rgba(248,245,240,0.75); }
+
+  .tarifs-footnote {
+    max-width: 1100px; margin: 48px auto 0; text-align: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 17px; color: rgba(248,245,240,0.75);
+  }
+
+  /* ── CONTACT (fond clair) ── */
+  .contact { text-align: center; }
+
+  .contact h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 5vw, 62px); font-weight: 300;
+    color: var(--texte); line-height: 1.15; margin: 18px 0 20px;
+  }
+
+  .contact h2 em { font-style: italic; color: var(--or); }
+
+  .contact-sub {
+    font-size: 15px; line-height: 1.9; color: #777; margin-bottom: 52px;
+  }
+
+  .phone-link {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px; font-weight: 300; letter-spacing: 3px;
+    color: var(--anthracite); text-decoration: none;
+    border-bottom: 1px solid var(--bordure);
+    padding-bottom: 6px; margin-bottom: 24px;
+    transition: color 0.3s, border-color 0.3s;
+  }
+
+  .phone-link:hover { color: var(--or); border-color: var(--or); }
+
+  .contact-city {
+    display: block; font-size: 10px; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--gris);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--anthracite); padding: 28px 72px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid #3a3a3a;
+  }
+
+  footer .logo { color: var(--or); font-size: 17px; font-family: 'Cormorant Garamond', serif; }
+  footer .logo small { color: rgba(248,245,240,0.55); }
+  footer small.copy { font-size: 10px; color: rgba(248,245,240,0.55); letter-spacing: 1px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    nav, section, footer { padding-left: 24px; padding-right: 24px; }
+    .hero::before, .hero::after { display: none; }
+    .hero h1 { font-size: 42px; }
+    .mission-grid, .tarifs-top { grid-template-columns: 1fr; gap: 40px; }
+    .services-grid, .tarifs-grid { grid-template-columns: 1fr; }
+    .p-row1 { grid-template-columns: 1fr 1fr; }
+    .p-row2 { max-width: 100%; grid-template-columns: 1fr; }
+    .hero-btns { flex-direction: column; gap: 14px; }
+    footer { flex-direction: column; gap: 10px; }
+  }
+
+</style>
 </head>
 <body>
-    <h1>Bienvenue sur Piazza Conciergerie</h1>
-    <p>Ceci est une page statique que vous pouvez publier avec GitHub Pages.</p>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="logo">Piazza Conciergerie<small>Location courte durée · Tours</small></a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#pourquoi">Approche</a></li>
+    <li><a href="#tarifs">Tarifs</a></li>
+    <li><a href="#contact" class="cta">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-tag reveal">Conciergerie · Location courte durée · Tours</div>
+    <h1 class="reveal d1">
+      L'excellence<br>au service de<br><em>votre location</em>
+    </h1>
+    <p class="hero-sub reveal d2">
+      Vous êtes propriétaire d'un bien en location courte durée et souhaitez en maximiser la rentabilité tout en offrant une expérience haut de gamme à vos voyageurs ?
+    </p>
+    <div class="hero-btns reveal d3">
+      <a href="#contact" class="btn-hero">Discutons de votre projet</a>
+      <a href="#services" class="btn-ghost">Découvrir nos services</a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ MISSION ══ -->
+<section class="light" id="mission">
+  <div class="mission-grid">
+    <div class="mission-text">
+      <p class="s-label reveal">Notre mission</p>
+      <h2 class="s-title reveal d1">Une gestion complète,<br>professionnelle<br>et discrète</h2>
+      <p class="reveal d2">
+        Piazza Conciergerie vous accompagne dans la gestion complète de votre bien, avec une approche professionnelle, personnalisée et discrète. Nous créons une expérience unique pour les voyageurs, tout en optimisant la performance locative de votre bien — sans jamais transformer votre logement en hôtel.
+      </p>
+    </div>
+    <div class="mission-cards">
+      <div class="m-card reveal d1"><strong>Gestion</strong><span>Opérationnelle complète</span></div>
+      <div class="m-card reveal d2"><strong>Premium</strong><span>Expérience voyageur</span></div>
+      <div class="m-card reveal d3"><strong>Discrète</strong><span>Approche personnalisée</span></div>
+      <div class="m-card reveal d4"><strong>Tours</strong><span>Basé localement</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section class="dark" id="services">
+  <div class="services-header">
+    <p class="s-label reveal">Ce que nous faisons</p>
+    <h2 class="s-title light-text reveal d1">Nos prestations</h2>
+    <p class="services-intro reveal d2">Notre gamme de prestations adaptées aux besoins des propriétaires et aux attentes des voyageurs.</p>
+  </div>
+  <div class="services-grid">
+    <div class="srv reveal">
+      <div class="srv-num">01</div>
+      <h3>Gestion opérationnelle</h3>
+      <ul>
+        <li>Nettoyage professionnel avant chaque départ</li>
+        <li>Changement et entretien du linge de maison</li>
+        <li>Préparation du logement avant chaque arrivée</li>
+      </ul>
+    </div>
+    <div class="srv reveal d2">
+      <div class="srv-num">02</div>
+      <h3>Expérience voyageur premium</h3>
+      <ul>
+        <li>Réservation de restaurants et d'activités</li>
+        <li>Organisation de services à domicile (massage, prestations bien-être…)</li>
+        <li>Réponse aux demandes spécifiques des locataires</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ POURQUOI ══ -->
+<section class="light" id="pourquoi">
+  <div class="pourquoi-head">
+    <p class="s-label center reveal">Notre différence</p>
+    <h2 class="s-title reveal d1">Pourquoi choisir Piazza ?</h2>
+  </div>
+  <div class="p-row1">
+    <div class="p-card reveal">
+      <h4>Augmentation du taux d'occupation</h4>
+      <p>Optimisation des tarifs de location pour maximiser vos revenus.</p>
+    </div>
+    <div class="p-card reveal d1">
+      <h4>Valorisation de votre propriété</h4>
+      <p>Votre bien entretenu et mis en valeur à chaque séjour.</p>
+    </div>
+    <div class="p-card reveal d2">
+      <h4>Disponibilité et réactivité</h4>
+      <p>Présents pour les locataires à chaque étape de leur séjour.</p>
+    </div>
+  </div>
+  <div class="p-row2">
+    <div class="p-card reveal d1">
+      <h4>Approche discrète</h4>
+      <p>Sans transformer votre logement en hôtel, l'authenticité de votre bien préservée.</p>
+    </div>
+    <div class="p-card reveal d2">
+      <h4>Accompagnement personnalisé</h4>
+      <p>Chaque collaboration débute par un entretien pour comprendre vos objectifs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TARIFS ══ -->
+<section class="dark" id="tarifs">
+  <div class="tarifs-top">
+    <div>
+      <p class="s-label reveal">Nos formules</p>
+      <h2 class="s-title light-text reveal d1">Tarifs<br>transparents</h2>
+    </div>
+    <p class="tarifs-note-top reveal d2">
+      Chaque collaboration débute par un entretien afin de comprendre vos objectifs et vous proposer une solution adaptée.
+    </p>
+  </div>
+  <div class="tarifs-grid">
+    <div class="t-card reveal">
+      <p class="t-label">Option 1</p>
+      <div class="t-price">15–22<sup>%</sup></div>
+      <p class="t-sub">de commission selon la formule choisie</p>
+      <p class="t-desc">Une commission comprise entre 15 % et 22 %, selon la formule choisie.</p>
+    </div>
+    <div class="t-card star reveal d2">
+      <span class="t-badge">Recommandé</span>
+      <p class="t-label">Option 2</p>
+      <div class="t-price" style="font-size:38px; padding: 10px 0 8px;">Forfait mensuel</div>
+      <p class="t-sub">fixe, défini après échange personnalisé</p>
+      <p class="t-desc">Un forfait mensuel fixe, défini après échange personnalisé avec le propriétaire.</p>
+    </div>
+  </div>
+  <p class="tarifs-footnote reveal">
+    "Notre mission : créer une expérience unique pour les voyageurs,<br>tout en optimisant la performance locative de votre bien."
+  </p>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section class="light contact" id="contact">
+  <p class="s-label center reveal">Nous contacter</p>
+  <h2 class="reveal d1">Donnez une nouvelle <em>dimension</em><br>à votre location</h2>
+  <p class="contact-sub reveal d2">
+    Vous souhaitez échanger sur votre projet ?<br>
+    Contactez-nous, nous serons ravis de vous accompagner.
+  </p>
+  <a href="tel:0757870951" class="phone-link reveal d3">07 57 87 09 51</a>
+  <span class="contact-city reveal d4">Basé à Tours</span>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="logo">Piazza Conciergerie<small>Location courte durée · Tours</small></a>
+  <small class="copy">© 2025 Piazza Conciergerie · Tous droits réservés</small>
+</footer>
+
+<script>
+  // Ombre nav au scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  // Reveal au scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
 </body>
 </html>

@@ -428,15 +428,43 @@
 
   /* ── RESPONSIVE ── */
   @media (max-width: 860px) {
-    nav, section, footer { padding-left: 24px; padding-right: 24px; }
+    /* NAV */
+    nav {
+      padding: 0 20px;
+      height: auto;
+      min-height: 60px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .logo { font-size: 16px; letter-spacing: 1px; }
+    .logo small { font-size: 7px; letter-spacing: 2px; }
+    .nav-links { display: none; }
+
+    /* SECTIONS */
+    section { padding: 72px 24px; }
+    .hero { padding: 110px 24px 80px; }
     .hero::before, .hero::after { display: none; }
     .hero h1 { font-size: 42px; }
+    .hero-btns { flex-direction: column; gap: 14px; align-items: center; }
+
     .mission-grid, .tarifs-top { grid-template-columns: 1fr; gap: 40px; }
     .services-grid, .tarifs-grid { grid-template-columns: 1fr; }
-    .p-row1 { grid-template-columns: 1fr 1fr; }
-    .p-row2 { max-width: 100%; grid-template-columns: 1fr; }
-    .hero-btns { flex-direction: column; gap: 14px; }
-    footer { flex-direction: column; gap: 10px; }
+
+    /* POURQUOI — tout en 1 colonne sur mobile */
+    .p-row1 {
+      grid-template-columns: 1fr;
+    }
+
+    .p-row2 {
+      max-width: 100%;
+      grid-template-columns: 1fr;
+    }
+
+    .contact h2 { font-size: 36px; }
+    .phone-link { font-size: 32px; }
+    footer { flex-direction: column; gap: 10px; padding: 20px 24px; text-align: center; }
   }
 
 </style>
